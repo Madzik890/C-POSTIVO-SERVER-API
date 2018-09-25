@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope
+ xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+ xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:ns1="http://api.postivo.pl/webservices.php"
+ xmlns:ns2="http://api.postivo.pl">
+ <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+  <ns2:getConfigProfilesResponse>
+   <return>
+    <result></result>
+    <result_code></result_code>
+    <result_description></result_description>
+    <config_profiles SOAP-ENC:arrayType="ns1:ConfigProfile[1]">
+     <item>
+      <config_id>0</config_id>
+      <config_name></config_name>
+      <paper_type></paper_type>
+      <paper_print_type></paper_print_type>
+      <envelope_type></envelope_type>
+      <envelope_template></envelope_template>
+      <envelope_print_type></envelope_print_type>
+      <carrier></carrier>
+      <dispatch_type></dispatch_type>
+     </item>
+    </config_profiles>
+   </return>
+  </ns2:getConfigProfilesResponse>
+ </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

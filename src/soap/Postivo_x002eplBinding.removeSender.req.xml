@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope
+ xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+ xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:ns1="http://api.postivo.pl/webservices.php"
+ xmlns:ns2="http://api.postivo.pl">
+ <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+  <ns2:removeSender>
+   <login></login>
+   <api_pass></api_pass>
+   <sender_id>0</sender_id>
+  </ns2:removeSender>
+ </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

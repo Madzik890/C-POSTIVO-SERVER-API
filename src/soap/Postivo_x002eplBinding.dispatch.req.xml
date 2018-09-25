@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope
+ xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+ xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:ns1="http://api.postivo.pl/webservices.php"
+ xmlns:ns2="http://api.postivo.pl">
+ <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+  <ns2:dispatch>
+   <login></login>
+   <api_pass></api_pass>
+   <msg_type></msg_type>
+   <document_files SOAP-ENC:arrayType="ns1:DocumentFile[1]">
+    <item>
+     <file_stream></file_stream>
+     <file_name></file_name>
+    </item>
+   </document_files>
+   <recipients SOAP-ENC:arrayType="ns1:Recipient[1]">
+    <item>
+     <source></source>
+     <id>0</id>
+     <recipient_name></recipient_name>
+     <recipient_address_prefix></recipient_address_prefix>
+     <recipient_address></recipient_address>
+     <recipient_home_number></recipient_home_number>
+     <recipient_flat_number></recipient_flat_number>
+     <recipient_post_code></recipient_post_code>
+     <recipient_city></recipient_city>
+     <recipient_country></recipient_country>
+     <recipient_fax_number></recipient_fax_number>
+    </item>
+   </recipients>
+   <options SOAP-ENC:arrayType="ns1:Option[1]">
+    <item>
+     <name></name>
+     <value></value>
+    </item>
+   </options>
+  </ns2:dispatch>
+ </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
