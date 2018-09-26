@@ -35,18 +35,13 @@ int ns2__dispatch(struct soap* soap, char *login, char *api_USCOREpass, char *ms
   struct client m_client;
   if(checkUserLogging(&m_client, login, api_USCOREpass) == successfulFind)
   { 
-    (*_param_1).return_ = calloc(1, sizeof(struct ns1__DispatchReturnObject));//malloc place in memory
-    (*_param_1).return_->shipments = calloc(1, sizeof(struct ArrayOfShipments));
-    (*_param_1).return_->shipments->__ptr = calloc(recipients->__size, sizeof(struct ns1__Shipment*));
+    (*_param_1).return_ = malloc(sizeof(struct ns1__DispatchReturnObject));//malloc place in memory
+    (*_param_1->return_).shipments = malloc(sizeof(struct ns1__Shipment));
     (*_param_1->return_->shipments).__size = recipients->__size;
-    //convertRecipientToShipment(recipients, &(*_param_1).return_->shipments);
-
-  
-
-    //for(int i = 0; i < document_USCOREfiles->__size; i++)
-    //{
-     // unPackDocument(document_USCOREfiles->__ptr[i]);
-    //}
+    (*_param_1->return_->shipments).__ptr = calloc(recipients->__size, sizeof(struct ns1__Shipment*));
+    convertRecipientToShipment(recipients, &(*_param_1).return_->shipments);
+    unPackDocument(document_USCOREfiles);//unpacks all documents
+    
     (*_param_1).return_->result = "OK";
     (*_param_1).return_->result_USCOREcode = "000";
     (*_param_1).return_->result_USCOREdescription = "SUCCESSFUL";

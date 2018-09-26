@@ -108,11 +108,23 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_request(struct soap *soap)
 void releaseDispatchResponse(struct ns2__dispatchResponse * _param_1)
 {
   if(_param_1->return_ != NULL)
+  {
 	free(_param_1->return_);
-  if(_param_1->return_->shipments != NULL)
-	free(_param_1->return_->shipments);
-  if(_param_1->return_->shipments->__ptr != NULL) 
-	free(_param_1->return_->shipments->__ptr);
+	if(_param_1->return_->shipments != NULL)
+	{
+	  free(_param_1->return_->shipments);
+	  if(_param_1->return_->shipments->__ptr != NULL) 
+	  {
+		for(int i = 0; i < _param_1->return_->shipments->__size; i++)
+		{
+		  free(_param_1->return_->shipments->__ptr[i]->page_USCOREnumber);
+    	  free(_param_1->return_->shipments->__ptr[i]->price);
+		  free(_param_1->return_->shipments->__ptr[i]);
+		}
+	  }
+	  free(_param_1->return_->shipments->__ptr);
+	}
+  }
 }
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns2__dispatch(struct soap *soap)

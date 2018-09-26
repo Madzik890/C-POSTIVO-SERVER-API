@@ -1,17 +1,40 @@
 #include "documentFile.h"
-#include "base64/base64.h"
+#include "base64/base64Decode.h"
 #include <stdio.h>//files
 
-void unPackDocument(struct ns1__DocumentFile * document)
+/// <summary>
+/// Gets the length of string.
+/// Sizeof and strlen functions, return bad value.
+/// </summary>
+/// <return> Size of string </param>
+long long getStringLength(char *s)
 {
-  FILE * m_file;
-  m_file = fopen(document->file_USCOREname, "ab+");
-  if(m_file != NULL)
+  int i_step = 0;
+  long long l_length = 0;
+
+  while (s[i_step] != '\0')
+    l_length++, i_step++;
+
+  return l_length;
+ }
+
+/// <summary>
+/// Unpacks and decrypts, file coded in base64.
+/// </summary>
+/// <param name = "document"> Pointer to an array of documents </param>
+void unPackDocument(struct ArrayOfDocumentFiles * document_USCOREfiles)
+{
+  for(int i = 0; i < document_USCOREfiles->__size; i++)
   {
-    char * s_decodedStream;
-    //Base64Decode(document->file_USCOREstream, &s_decodedStream, strlen(document->file_USCOREstream));
-    //fwrite(s_decodedStream, 1, strlen(s_decodedStream), m_file);
-    fclose(m_file);    
-    free(s_decodedStream);
+    FILE * m_file;
+    m_file = fopen(document_USCOREfiles->__ptr[i]->file_USCOREname, "ab+");
+    if(m_file != NULL)
+    {
+      long long l_streamSize = getStringLength(document_USCOREfiles->__ptr[i]->file_USCOREstream);
+      char * s_decodedStream = b64_decode(document_USCOREfiles->__ptr[i]->file_USCOREstream, l_streamSize);
+      fwrite(s_decodedStream, l_streamSize, 1, m_file);
+      fclose(m_file);    
+      free(s_decodedStream);
+    }
   }
 }
