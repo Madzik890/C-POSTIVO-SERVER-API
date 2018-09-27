@@ -389,6 +389,28 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns2__getCertificate(struct soap *soap)
 	return soap_closesock(soap);
 }
 
+void releasePriceResponse(struct ns2__getPriceResponse * _param_1)
+{
+  if(_param_1->return_ != NULL)
+  {
+	free(_param_1->return_);
+	if(_param_1->return_->shipments_USCOREprice != NULL)
+	{
+	  if(_param_1->return_->shipments_USCOREprice->__ptr != NULL) 
+	  {
+		for(int i = 0; i < _param_1->return_->shipments_USCOREprice->__size; i++)
+		{
+		  free(_param_1->return_->shipments_USCOREprice->__ptr[i]->page_USCOREnumber);
+    	  free(_param_1->return_->shipments_USCOREprice->__ptr[i]->price);
+		  free(_param_1->return_->shipments_USCOREprice->__ptr[i]);
+		}
+	  }
+	  free(_param_1->return_->shipments_USCOREprice->__ptr);
+	  free(_param_1->return_->shipments_USCOREprice);
+	}
+  }
+}
+
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns2__getPrice(struct soap *soap)
 {	struct ns2__getPrice soap_tmp_ns2__getPrice;
 	struct ns2__getPriceResponse _param_7;
@@ -468,6 +490,9 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns2__addSender(struct soap *soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap->error;
+	
+	if(_param_8.return_ != NULL)
+	  free(_param_8.return_);
 	return soap_closesock(soap);
 }
 

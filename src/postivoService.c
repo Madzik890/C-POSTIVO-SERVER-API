@@ -6,6 +6,7 @@
 #include "data/clientsData.h"
 #include "documentFile.h"
 #include "shipments.h"
+#include "senders.h"
 
 clientStatus checkUserLogging(client * client, char * login, char *api_USCOREpass)
 {
@@ -127,6 +128,29 @@ int ns2__getBalance(struct soap* soap, char *login, char *api_USCOREpass, struct
 /// <param name = "_param_1"> The result of connections. </param>
 int ns2__getPrice(struct soap* soap, char *login, char *api_USCOREpass, char *msg_USCOREtype, struct ArrayOfDocumentFiles *document_USCOREfiles, struct ArrayOfRecipients *recipients, int config_USCOREid, struct ns2__getPriceResponse *_param_1)
 {
+  struct client m_client;
+  if(checkUserLogging(&m_client, login, api_USCOREpass) == successfulFind)
+  { 
+    (*_param_1).return_ = malloc(sizeof(struct ns1__PriceReturnObject));//malloc place in memory
+    (*_param_1->return_).shipments_USCOREprice = malloc(sizeof(struct ArrayOfShipmentsPrice));
+    (*_param_1->return_->shipments_USCOREprice).__size  = recipients->__size;
+    (*_param_1->return_->shipments_USCOREprice).__ptr = calloc(recipients->__size, sizeof(struct ns1__ShipmentPrice));
+
+    
+    convertRecipientToShipmentPrice(recipients, &(*_param_1).return_->shipments_USCOREprice);
+    
+    (*_param_1).return_->result = "OK";
+    (*_param_1).return_->result_USCOREcode = "000";
+    (*_param_1).return_->result_USCOREdescription = "SUCCESSFUL";
+  }
+  else
+  {
+    (*_param_1).return_ = malloc(sizeof(struct ns1__DispatchReturnObject));
+    (*_param_1).return_->shipments_USCOREprice = NULL;
+    (*_param_1).return_->result = "ERR";
+    (*_param_1).return_->result_USCOREcode = "001";
+    (*_param_1).return_->result_USCOREdescription = "BAD LOGIN OR PASSWORD";
+  }
   return SOAP_OK;
 }
 
@@ -154,6 +178,26 @@ int ns2__getConfigProfiles(struct soap* soap, char *login, char *api_USCOREpass,
 /// <param name = "_param_1"> Array of sendes. </param>
 int ns2__getSenders(struct soap* soap, char *login, char *api_USCOREpass, struct ns2__getSendersResponse *_param_1)
 {
+  struct client m_client;
+  if(checkUserLogging(&m_client, login, api_USCOREpass) == successfulFind)
+  { 
+    (*_param_1).return_ = malloc(sizeof(struct ns1__SendersReturnObject));
+    (*_param_1->return_).senders = malloc(sizeof(struct ArrayOfSenders));
+    
+    //createSendersFromFile(&(*_param_1->return_).senders);
+
+    (*_param_1).return_->result = "OK";
+    (*_param_1).return_->result_USCOREcode = "000";
+    (*_param_1).return_->result_USCOREdescription = "SUCCESSFUL";
+  }
+  else
+  {
+    (*_param_1).return_ = malloc(sizeof(struct ns1__SendersReturnObject));
+    (*_param_1).return_->result = "ERR";
+    (*_param_1).return_->result_USCOREcode = "001";
+    (*_param_1).return_->result_USCOREdescription = "BAD LOGIN OR PASSWORD";
+  }
+
   return SOAP_OK;
 }
 
@@ -182,6 +226,25 @@ int ns2__getCertificate(struct soap* soap, char *login, char *api_USCOREpass, ch
 /// <param name = "_param_1"> Result of connection. </param>
 int ns2__addSender(struct soap* soap, char *login, char *api_USCOREpass, struct ns1__SenderData *sender_USCOREdata, enum xsd__boolean accept_USCOREterms, struct ns2__addSenderResponse *_param_1)
 {
+  struct client m_client;
+  if(checkUserLogging(&m_client, login, api_USCOREpass) == successfulFind)
+  { 
+    (*_param_1).return_ = malloc(sizeof(struct ns1__AddSenderReturnObject));//malloc place in memory
+    
+    saveSenderToFile(sender_USCOREdata);
+    
+    (*_param_1).return_->result = "OK";
+    (*_param_1).return_->result_USCOREcode = "000";
+    (*_param_1).return_->result_USCOREdescription = "SUCCESSFUL";
+  }
+  else
+  {
+    (*_param_1).return_ = malloc(sizeof(struct ns1__AddSenderReturnObject));
+    (*_param_1).return_->result = "ERR";
+    (*_param_1).return_->result_USCOREcode = "001";
+    (*_param_1).return_->result_USCOREdescription = "BAD LOGIN OR PASSWORD";
+  }
+
   return SOAP_OK;
 }
 
