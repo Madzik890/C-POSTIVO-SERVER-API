@@ -18,6 +18,7 @@ typedef struct senderParamStatus senderParamStatus;
 struct senderParamStatus
 {
   int i_checkedID;
+  int i_checkedName;
   int i_checkedPost;
   int i_checkedCity;
   int i_checkedAddress;
@@ -29,7 +30,7 @@ struct senderParamStatus
 void resetSenderVariables(struct ns1__Sender ** sender);
 void readSendersFile();
 void getSizeOfSenders();
-void analyzeParam(char line[255], unsigned int * senderNow, struct ns1__Sender ** sender, struct senderParamStatus * status);
+void analyzeParam(char line[255], unsigned int * senderNow, struct ns1__Sender * sender, struct senderParamStatus * status);
 /// </private functions>
 
 /// <summary>
@@ -64,16 +65,12 @@ void createSendersFromFile(struct ArrayOfSenders ** senders)
     while (fgets(s_buffer, sizeof(s_buffer), m_file) != NULL)
     {
       s_buffer[strlen(s_buffer) - 1] = '\0'; //delete a newline sign
-      analyzeParam(s_buffer, &u_senderNow, &(*(*senders)).__ptr[u_senderNow], &m_status);
+      analyzeParam(s_buffer, &u_senderNow, &(*(*senders)->__ptr[u_senderNow]), &m_status);
     }
+
     fclose(m_file);
   }
   pthread_mutex_unlock(&g_mutex);//unlock mutex, after a close file
-}
-
-void freeCreatedSender(struct ns1__Sender * sender)
-{
-
 }
 
 /// <summary>
@@ -183,57 +180,89 @@ void getSizeOfSenders()
 /// <param name = "senderNow"> Pointer to int which contains, actually number, editing sender </param>
 /// <param name = "sender"> Pointer to a user array </param>
 /// <param name = "status"> Progres of loading parameters of sender </param>
-void analyzeParam(char line[255], unsigned int * senderNow, struct ns1__Sender ** sender, struct senderParamStatus * status)
+void analyzeParam(char line[255], unsigned int * senderNow, struct ns1__Sender * sender, struct senderParamStatus * status)
 {
   char s_param[255];
   if(strstr(line, "[Sender id]:"))
   {
     strncpy(s_param, line + 12, strlen(line) - 10);
-    (*(*sender)).sender_USCOREid = malloc(sizeof(int));
-    (*(*sender)->sender_USCOREid) = atoi(s_param);
+    (*sender).sender_USCOREid = malloc(sizeof(int));
+    (*sender->sender_USCOREid) = atoi(s_param);
     (*status).i_checkedID = 1;
   }
   else
   if(strstr(line, "[Sender post code]:"))
   {
     strncpy(s_param, line + 19, strlen(line) - 17);
-    (*(*sender)).sender_USCOREpost_USCOREcode = s_param;
+    if(strlen(s_param) > 0)
+    {
+      (*sender).sender_USCOREpost_USCOREcode = malloc(sizeof(char) * 255);
+      strcpy((*sender).sender_USCOREpost_USCOREcode, s_param);
+    }
     (*status).i_checkedPost = 1;
+  }
+  else
+  if(strstr(line, "[Sender name]:"))
+  {
+    strncpy(s_param, line + 14, strlen(line) - 12);
+    if(strlen(s_param) > 0)
+    {
+      (*sender).sender_USCOREname = malloc(sizeof(char) * 255);
+      strcpy((*sender).sender_USCOREname, s_param);
+    }
+    (*status).i_checkedName = 1;
   }
   else
   if(strstr(line, "[Sender city]:"))
   {
     strncpy(s_param, line + 14, strlen(line) - 12);
-    (*(*sender)).sender_USCOREcity = s_param;
+    if(strlen(s_param) > 0)
+    {
+      (*sender).sender_USCOREcity = malloc(sizeof(char) * 255);
+      strcpy((*sender).sender_USCOREcity, s_param);
+    }
     (*status).i_checkedCity = 1;
   }
   else
   if(strstr(line, "[Sender address]:"))
   {
     strncpy(s_param, line + 17, strlen(line) - 15);
-    (*(*sender)).sender_USCOREaddress = s_param;
+    if(strlen(s_param) > 0)
+    {
+      (*sender).sender_USCOREaddress = malloc(sizeof(char) * 255);
+      strcpy((*sender).sender_USCOREaddress, s_param);
+    }
     (*status).i_checkedAddress = 1;
   }
   else
   if(strstr(line, "[Sender home number]:"))
   {
+
     strncpy(s_param, line + 21, strlen(line) - 19);
-    (*(*sender)).sender_USCOREhome_USCOREnumber = s_param;
+    if(strlen(s_param) > 0)
+    {
+      (*sender).sender_USCOREhome_USCOREnumber = malloc(sizeof(char) * 255);
+      strcpy((*sender).sender_USCOREhome_USCOREnumber, s_param);
+    }
     (*status).i_checkedHome = 1;
   }
   else
-  if(strstr(line, "[Sender flat number]"))
+  if(strstr(line, "[Sender flat number]:"))
   {
     strncpy(s_param, line + 21, strlen(line) - 19);
-    (*(*sender)).sender_USCOREflat_USCOREnumber = s_param;
+    if(strlen(s_param) > 0)
+    {
+      (*sender).sender_USCOREflat_USCOREnumber = malloc(sizeof(char) * 255);
+      strcpy((*sender).sender_USCOREflat_USCOREnumber, s_param);
+    }
     (*status).i_checkedFlat = 1;
   }
 
-  if((*status).i_checkedID == 1 && (*status).i_checkedPost == 1 && (*status).i_checkedCity == 1 && (*status).i_checkedAddress == 1 && (*status).i_checkedHome == 1 &&
-     (*status).i_checkedFlat == 1)
+  if((*status).i_checkedID == 1 && (*status).i_checkedName == 1 && (*status).i_checkedPost == 1 && (*status).i_checkedCity == 1 && (*status).i_checkedAddress == 1 && 
+     (*status).i_checkedHome == 1 && (*status).i_checkedFlat == 1)
   {
-    (*status).i_checkedID = 0, (*status).i_checkedPost = 0, (*status).i_checkedCity = 0;
-    (*status).i_checkedAddress = 0, (*status).i_checkedHome = 0,  (*status).i_checkedFlat = 0;
+    (*status).i_checkedID = 0, (*status).i_checkedName = 0, (*status).i_checkedPost = 0;
+    (*status).i_checkedCity = 0, (*status).i_checkedAddress = 0, (*status).i_checkedHome = 0,  (*status).i_checkedFlat = 0;
     (*senderNow)++;
   }
 }

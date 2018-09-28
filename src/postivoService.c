@@ -187,6 +187,7 @@ int ns2__getSenders(struct soap* soap, char *login, char *api_USCOREpass, struct
     (*_param_1->return_).senders = malloc(sizeof(struct ArrayOfSenders));
     
     createSendersFromFile(&(*_param_1->return_).senders);
+    
     if((*_param_1->return_->senders).__size != 0)
     {
       (*_param_1).return_->result = "OK";
