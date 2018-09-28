@@ -307,6 +307,33 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns2__getConfigProfiles(struct soap *soap)
 	return soap_closesock(soap);
 }
 
+void releaseGetSendersResponse(struct ns2__getSendersResponse * _param_5)
+{
+  if(_param_5->return_ != NULL)
+  {
+	if(_param_5->return_->senders != NULL)
+	{
+	  if(_param_5->return_->senders->__ptr != NULL) 
+	  {
+		for(int i = 0; i < _param_5->return_->senders->__size; i++)
+		{
+		  free(_param_5->return_->senders->__ptr[i]->sender_USCOREaddress);
+		  free(_param_5->return_->senders->__ptr[i]->sender_USCOREcity);
+		  free(_param_5->return_->senders->__ptr[i]->sender_USCOREflat_USCOREnumber);
+		  free(_param_5->return_->senders->__ptr[i]->sender_USCOREhome_USCOREnumber);
+		  free(_param_5->return_->senders->__ptr[i]->sender_USCOREid);
+		  free(_param_5->return_->senders->__ptr[i]->sender_USCOREname);
+		  free(_param_5->return_->senders->__ptr[i]->sender_USCOREpost_USCOREcode);
+		  free(_param_5->return_->senders->__ptr[i]);
+		}
+	  }
+	  free(_param_5->return_->senders->__ptr);
+	  free(_param_5->return_->senders);
+	}
+	free(_param_5->return_);
+  }
+}
+
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns2__getSenders(struct soap *soap)
 {	struct ns2__getSenders soap_tmp_ns2__getSenders;
 	struct ns2__getSendersResponse _param_5;
@@ -345,6 +372,8 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns2__getSenders(struct soap *soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap->error;
+
+	releaseGetSendersResponse(&_param_5);
 	return soap_closesock(soap);
 }
 
@@ -393,7 +422,6 @@ void releasePriceResponse(struct ns2__getPriceResponse * _param_1)
 {
   if(_param_1->return_ != NULL)
   {
-	free(_param_1->return_);
 	if(_param_1->return_->shipments_USCOREprice != NULL)
 	{
 	  if(_param_1->return_->shipments_USCOREprice->__ptr != NULL) 
@@ -408,6 +436,7 @@ void releasePriceResponse(struct ns2__getPriceResponse * _param_1)
 	  free(_param_1->return_->shipments_USCOREprice->__ptr);
 	  free(_param_1->return_->shipments_USCOREprice);
 	}
+	free(_param_1->return_);
   }
 }
 
@@ -449,6 +478,8 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns2__getPrice(struct soap *soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap->error;
+
+	releasePriceResponse(&_param_7);
 	return soap_closesock(soap);
 }
 
