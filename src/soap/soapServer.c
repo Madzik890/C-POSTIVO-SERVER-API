@@ -112,7 +112,6 @@ void releaseDispatchResponse(struct ns2__dispatchResponse * _param_1)
 	free(_param_1->return_);
 	if(_param_1->return_->shipments != NULL)
 	{
-	  free(_param_1->return_->shipments);
 	  if(_param_1->return_->shipments->__ptr != NULL) 
 	  {
 		for(int i = 0; i < _param_1->return_->shipments->__size; i++)
@@ -123,6 +122,7 @@ void releaseDispatchResponse(struct ns2__dispatchResponse * _param_1)
 		}
 	  }
 	  free(_param_1->return_->shipments->__ptr);
+	  free(_param_1->return_->shipments);
 	}
   }
 }

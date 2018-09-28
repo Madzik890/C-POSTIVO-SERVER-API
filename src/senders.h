@@ -5,7 +5,8 @@
 
 extern unsigned int u_sendersSize;
 
-void createSendersFromFile(struct ns1__Sender ** senders);
+void createSendersFromFile(struct ArrayOfSenders ** senders);
+void freeCreatedSender(struct ns1__Sender * sender);
 void saveSenderToFile(struct ns1__SenderData *sender_USCOREdata);
 
 #endif

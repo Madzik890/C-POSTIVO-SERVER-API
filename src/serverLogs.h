@@ -35,13 +35,6 @@ extern logsLevel g_logsLevel;
 
 logsError createLogs();
 logsError writeLogLine(logsType type, const char * line);
-logsError writeLogAcc(const char * login, const char * password);
-
-logsError writeDispatch(const char * login, char *msg_USCOREtype, struct ArrayOfDocumentFiles *document_USCOREfiles, struct ArrayOfRecipients *recipients, struct ArrayOfOptions *options);
-logsError writeDispatchResult(struct ns2__dispatchResponse m_dispatchStatus);
-logsError writeGetDispatchStatus(char * login, struct ArrayOfDispatchIds *dispatch_USCOREids);
-logsError writeGetDispatchStatusResult(struct ns2__getDispatchStatusResponse m_getDispatchStatus);
-
 void closeLogs();
 
 #endif

@@ -3,6 +3,7 @@
 #include "serverOptions.h"
 #include <pthread.h>
 #include "data/clientsData.h"
+#include "senders.h"
 
 int main()
 {

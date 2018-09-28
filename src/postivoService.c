@@ -37,9 +37,12 @@ int ns2__dispatch(struct soap* soap, char *login, char *api_USCOREpass, char *ms
   if(checkUserLogging(&m_client, login, api_USCOREpass) == successfulFind)
   { 
     (*_param_1).return_ = malloc(sizeof(struct ns1__DispatchReturnObject));//malloc place in memory
-    (*_param_1->return_).shipments = malloc(sizeof(struct ns1__Shipment));
+    (*_param_1->return_).shipments = malloc(sizeof(struct ArrayOfShipments));
     (*_param_1->return_->shipments).__size = recipients->__size;
     (*_param_1->return_->shipments).__ptr = calloc(recipients->__size, sizeof(struct ns1__Shipment*));
+
+   // char * s_command = malloc(sizeof(255));
+    //system("mkdir -p foo/bar/xyz");
     convertRecipientToShipment(recipients, &(*_param_1).return_->shipments);
     unPackDocument(document_USCOREfiles);//unpacks all documents
     
@@ -134,9 +137,8 @@ int ns2__getPrice(struct soap* soap, char *login, char *api_USCOREpass, char *ms
     (*_param_1).return_ = malloc(sizeof(struct ns1__PriceReturnObject));//malloc place in memory
     (*_param_1->return_).shipments_USCOREprice = malloc(sizeof(struct ArrayOfShipmentsPrice));
     (*_param_1->return_->shipments_USCOREprice).__size  = recipients->__size;
-    (*_param_1->return_->shipments_USCOREprice).__ptr = calloc(recipients->__size, sizeof(struct ns1__ShipmentPrice));
+    (*_param_1->return_->shipments_USCOREprice).__ptr = calloc(recipients->__size, sizeof(struct ns1__ShipmentPrice*));
 
-    
     convertRecipientToShipmentPrice(recipients, &(*_param_1).return_->shipments_USCOREprice);
     
     (*_param_1).return_->result = "OK";
@@ -184,7 +186,7 @@ int ns2__getSenders(struct soap* soap, char *login, char *api_USCOREpass, struct
     (*_param_1).return_ = malloc(sizeof(struct ns1__SendersReturnObject));
     (*_param_1->return_).senders = malloc(sizeof(struct ArrayOfSenders));
     
-    //createSendersFromFile(&(*_param_1->return_).senders);
+    createSendersFromFile(&(*_param_1->return_).senders);
 
     (*_param_1).return_->result = "OK";
     (*_param_1).return_->result_USCOREcode = "000";

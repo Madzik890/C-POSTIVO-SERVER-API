@@ -1,6 +1,11 @@
 #include "shipments.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
+
+/// <private instances>
+pthread_mutex_t m_mutex;
+/// </private instances>
 
 /// <private functions>
 void saveShipmentToFile(struct ns1__Shipment * shipment);
@@ -69,29 +74,36 @@ void saveShipmentToFile(struct ns1__Shipment * shipment)
   char * s_fileDir;
   //strcpy(s_fileDir, "dispatches/");       // copies "one" into str_output
   strcat(s_fileDir, shipment->recipient_USCOREname);
-  
+  pthread_mutex_lock(&m_mutex);//lock mutex, before work with a file
   m_file = fopen(s_fileDir, "ab+");
   if(m_file != NULL)
   {
+    fwrite("[RECIPIENT NAME]:", 1, 17, m_file);
     fwrite(shipment->recipient_USCOREname, 1, strlen(shipment->recipient_USCOREname), m_file);
     fwrite("\n", 1, 1, m_file);
-
-    fwrite(shipment->recipient_USCOREcity, 1, strlen(shipment->recipient_USCOREcity), m_file);
-    fwrite("\n", 1, 1, m_file);
-
+    
+    fwrite("[RECIPIENT POST CODE]:", 1, 22, m_file);
     fwrite(shipment->recipient_USCOREpost_USCOREcode, 1, strlen(shipment->recipient_USCOREpost_USCOREcode), m_file);
     fwrite("\n", 1, 1, m_file);
 
+    fwrite("[RECIPIENT CITY]:", 1, 18, m_file);
+    fwrite(shipment->recipient_USCOREcity, 1, strlen(shipment->recipient_USCOREcity), m_file);
+    fwrite("\n", 1, 1, m_file);
+
+    fwrite("[RECIPIENT ADDRESS]:", 1, 20, m_file);
     fwrite(shipment->recipient_USCOREaddress, 1, strlen(shipment->recipient_USCOREaddress), m_file);
     fwrite("\n", 1, 1, m_file);
     
+    fwrite("[RECIPIENT HOME NUMBER]:", 1, 24, m_file);
     fwrite(shipment->recipient_USCOREhome_USCOREnumber, 1, strlen(shipment->recipient_USCOREhome_USCOREnumber), m_file);
     fwrite("\n", 1, 1, m_file);
 
+    fwrite("[RECIPIENT FLAT NUMBER]:", 1, 24, m_file);
     fwrite(shipment->recipient_USCOREflat_USCOREnumber, 1, strlen(shipment->recipient_USCOREflat_USCOREnumber), m_file);
     fwrite("\n", 1, 1, m_file);
 
     fclose(m_file);
   }
+  pthread_mutex_unlock(&m_mutex);//unlock mutex, after work with a file
 }
 /// </private functions>

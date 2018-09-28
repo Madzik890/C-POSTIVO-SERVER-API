@@ -15,11 +15,6 @@ char * s_fileDir;//direction to the file log
 logsLevel g_logsLevel = high;
 /// <global instances>
 
-/// <privates functions>
-void writeDocumentsTitles(struct ArrayOfDocumentFiles * document_USCOREfiles);
-void writeDispatchIDs(struct ArrayOfDispatchIds *dispatch_USCOREids);
-/// </privates functions>
-
 /// <summary>
 /// Returns actual time to the char.
 /// <summary>
@@ -117,112 +112,6 @@ logsError writeLogLine(logsType type, const char * line)
 }
 
 /// <summary>
-/// Writes user login and password to log file.
-/// </summary>
-/// <param name = "login"> User login </param>
-/// <param name = "password"> User password </param>
-/// <result> State of the operation. </result>
-logsError writeLogAcc(const char * login, const char * password)
-{
-  if(g_logsLevel == high)
-  {
-    m_fileLog = fopen(s_fileDir, OPEN_MODE);
-    writeTimeLine();
-    fwrite(" [DEBUG] ", 1, 9, m_fileLog);//line of log
-
-    fwrite("User connected with login:", 1, 26, m_fileLog);
-    fwrite(login, 1, strlen(login) - 1, m_fileLog);
-    fwrite(" and password: ", 1, 15, m_fileLog);
-    fwrite(password, 1, strlen(password), m_fileLog);
-    fwrite("\n", 1, 1, m_fileLog);//next line sign
-
-    fclose(m_fileLog);//close file
-    return successful;
-  }
-
-  return noPermission;
-}
-
-/// <summary>
-/// Writes dispatch operation to the file.
-/// </summary>
-/// <param name = login> User login. </param>
-/// <param name = "document_USCOREfiles"> Array of documents, encoded in BASE64. </param>
-/// <param name = "recipients"> Array of recipients. </param>
-/// <param name = "options"> Additional options. </param>
-logsError writeDispatch(const char * login, char *msg_USCOREtype, struct ArrayOfDocumentFiles *document_USCOREfiles, struct ArrayOfRecipients *recipients, struct ArrayOfOptions *options)
-{
-  if(g_logsLevel != none)
-  {
-    m_fileLog = fopen(s_fileDir, OPEN_MODE);
-    writeTimeLine();
-    fwrite(" [INFO] ", 1, 8, m_fileLog);//line of log
-
-    fwrite("Dispatch operation | Account:", 1, 29, m_fileLog);
-    fwrite(login, 1, strlen(login) - 1, m_fileLog);
-    
-    fwrite(" Documents titles:", 1, 18, m_fileLog);
-    writeDocumentsTitles(document_USCOREfiles);
-    fwrite("\n", 1, 1, m_fileLog);//next line sign
-
-    fclose(m_fileLog);
-    return successful;
-  }
-  return noPermission;
-}
-
-/// <summary>
-/// Writes to the file result of operation.
-/// </summary>
-/// <param name = "m_dispatchStatus"> Result of operation </param>
-logsError writeDispatchResult(struct ns2__dispatchResponse m_dispatchStatus)
-{
-  if(g_logsLevel != none)
-  {
-    m_fileLog = fopen(s_fileDir, OPEN_MODE);
-    writeTimeLine();
-    if(!strcmp(m_dispatchStatus.return_->result, "OK"))//if is no error
-    {
-      fwrite(" [INFO] ", 1, 8, m_fileLog);//line of log
-      fwrite("Dispatch operation ended successful.", 1, 18, m_fileLog);
-    }
-    else
-    {
-      fwrite(" [ERROR] ", 1, 9, m_fileLog);//line of log
-      fwrite(m_dispatchStatus.return_->result_USCOREdescription, 1, strlen(m_dispatchStatus.return_->result_USCOREdescription), m_fileLog);
-    }
-
-    fwrite("\n", 1, 1, m_fileLog);//next line sign
-    fclose(m_fileLog);
-    return successful;
-  }
-  return noPermission;
-}
-
-/// <summary>
-/// Writes to the file result of opeartions.
-/// </summary>
-/// <param name = "login"> Login </param>
-/// <param name = "dispatch_USCOREids"> Pointer to array of dispatch </param>
-/// <return> Result of operation </return>
-logsError writeGetDispatchStatus(char * login, struct ArrayOfDispatchIds *dispatch_USCOREids)
-{
-  if(g_logsLevel != none)
-  {
-    m_fileLog = fopen(s_fileDir, OPEN_MODE);
-    writeTimeLine();
-    fwrite(" [INFO] ", 1, 8, m_fileLog);//line of log
-
-    fwrite("Get dispatch status operation| Account:", 1, 39, m_fileLog);
-    fwrite(login, 1, strlen(login) - 1, m_fileLog);
-    fwrite(" Dispatch id's: ", 1, 26, m_fileLog);
-
-    return successful;
-  }
-  return noPermission;
-}
-
-/// <summary>
 /// Cautiously close file and 
 /// releases memory.
 /// </summary>
@@ -231,31 +120,3 @@ void closeLogs()
   fclose(m_fileLog);//close file 
   free(s_fileDir);//release string dir to file
 }
-
-/// <privates functions>
-
-/// <summary>
-/// Writes titles of all documents files.
-/// </summary>
-/// <param name = "document_USCOREfiles"> Pointer to array of documents </param>
-void writeDocumentsTitles(struct ArrayOfDocumentFiles * document_USCOREfiles)
-{
-  for(int i = 0; i < document_USCOREfiles->__size && document_USCOREfiles->__size > 0; i++)
-  {
-    fwrite(document_USCOREfiles->__ptr[i]->file_USCOREname, 1, strlen(document_USCOREfiles->__ptr[i]->file_USCOREname), m_fileLog);
-  }
-}
-
-/// <summary>
-/// Writes id's of dispatch to the log file.
-/// <param name = "dispatch_USCOREids"> Pointer to an array of dispatch id's </param>
-/// </summary>
-void writeDispatchIDs(struct ArrayOfDispatchIds *dispatch_USCOREids)
-{
-  for(int i = 0; i < dispatch_USCOREids->__size && dispatch_USCOREids->__size > 0; i++)
-  {
-    fwrite(dispatch_USCOREids->__ptr[0], 1, strlen(dispatch_USCOREids->__ptr[0]), m_fileLog);
-  }
-}
-
-/// </privates functions>

@@ -1,6 +1,11 @@
 #include "documentFile.h"
 #include "base64/base64Decode.h"
 #include <stdio.h>//files
+#include <pthread.h>
+
+/// <private instances>
+pthread_mutex_t m_mutex;
+/// </private instances>
 
 /// <summary>
 /// Gets the length of string.
@@ -27,6 +32,7 @@ void unPackDocument(struct ArrayOfDocumentFiles * document_USCOREfiles)
   for(int i = 0; i < document_USCOREfiles->__size; i++)
   {
     FILE * m_file;
+    pthread_mutex_lock(&m_mutex);//lock mutex, before work with a file
     m_file = fopen(document_USCOREfiles->__ptr[i]->file_USCOREname, "ab+");
     if(m_file != NULL)
     {
@@ -36,5 +42,6 @@ void unPackDocument(struct ArrayOfDocumentFiles * document_USCOREfiles)
       fclose(m_file);    
       free(s_decodedStream);
     }
+    pthread_mutex_unlock(&m_mutex);//unlock mutex, after close a file
   }
 }
