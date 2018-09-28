@@ -83,7 +83,7 @@ void saveShipmentToFile(struct ns1__Shipment * shipment)
     fwrite(shipment->recipient_USCOREpost_USCOREcode, 1, strlen(shipment->recipient_USCOREpost_USCOREcode), m_file);
     fwrite("\n", 1, 1, m_file);
 
-    fwrite("[RECIPIENT CITY]:", 1, 18, m_file);
+    fwrite("[RECIPIENT CITY]:", 1, 17, m_file);
     fwrite(shipment->recipient_USCOREcity, 1, strlen(shipment->recipient_USCOREcity), m_file);
     fwrite("\n", 1, 1, m_file);
 
