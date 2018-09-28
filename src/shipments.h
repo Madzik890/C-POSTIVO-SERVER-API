@@ -3,7 +3,7 @@
 
 #include "soap/soapH.h"
 
-void convertRecipientToShipment(struct ArrayOfRecipients *recipients, struct ArrayOfShipments **shipments);
+void convertRecipientToShipment(char * s_folderDir, struct ArrayOfRecipients *recipients, struct ArrayOfShipments **shipments);
 void convertRecipientToShipmentPrice(struct ArrayOfRecipients *recipients, struct ArrayOfShipmentsPrice **shipments);
 
 #endif

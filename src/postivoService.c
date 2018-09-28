@@ -41,10 +41,24 @@ int ns2__dispatch(struct soap* soap, char *login, char *api_USCOREpass, char *ms
     (*_param_1->return_->shipments).__size = recipients->__size;
     (*_param_1->return_->shipments).__ptr = calloc(recipients->__size, sizeof(struct ns1__Shipment*));
 
-   // char * s_command = malloc(sizeof(255));
-    //system("mkdir -p foo/bar/xyz");
-    convertRecipientToShipment(recipients, &(*_param_1).return_->shipments);
-    unPackDocument(document_USCOREfiles);//unpacks all documents
+    if(recipients->__size > 0)
+    {
+      char * s_folderDir = malloc(sizeof(100));
+      strcpy(s_folderDir, "data/");
+      strcat(s_folderDir, recipients->__ptr[0]->recipient_USCOREaddress);
+
+      char * s_command = malloc(sizeof(200));
+      strcpy(s_command, "mkdir -p ");
+      strcat(s_command, s_folderDir);
+      system(s_command);//create a new folder
+
+      strcat(s_folderDir, "/");
+
+      convertRecipientToShipment(s_folderDir, recipients, &(*_param_1).return_->shipments);
+      unPackDocument(s_folderDir, document_USCOREfiles);//unpacks all documents
+      free(s_command);
+      free(s_folderDir);
+    }
     
     (*_param_1).return_->result = "OK";
     (*_param_1).return_->result_USCOREcode = "000";

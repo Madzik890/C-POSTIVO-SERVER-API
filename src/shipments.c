@@ -5,13 +5,13 @@
 
 
 /// <private functions>
-void saveShipmentToFile(struct ns1__Shipment * shipment);
+void saveShipmentToFile(char * s_folderDir, struct ns1__Shipment * shipment);
 /// </private functions>
 
 /// <summary>
 /// Converts recipient object to shipment struct.
 /// </summary>
-void convertRecipientToShipment(struct ArrayOfRecipients *recipients, struct ArrayOfShipments **shipments)
+void convertRecipientToShipment(char * s_folderDir, struct ArrayOfRecipients *recipients, struct ArrayOfShipments **shipments)
 {
   for(int i = 0; i < recipients->__size; i++)
   {
@@ -32,7 +32,7 @@ void convertRecipientToShipment(struct ArrayOfRecipients *recipients, struct Arr
     (*shipments)->__ptr[i]->price = malloc(sizeof(float));
     (*(*shipments)->__ptr[i]->price) = 2.56f;
 
-    saveShipmentToFile((*shipments)->__ptr[i]);
+    saveShipmentToFile(s_folderDir, (*shipments)->__ptr[i]);
   }
 }
 
@@ -65,11 +65,11 @@ void convertRecipientToShipmentPrice(struct ArrayOfRecipients *recipients, struc
 /// Saves shipment object to file.
 /// </summary>
 /// <param name = "shipment"> Pointer to shipment object </param>
-void saveShipmentToFile(struct ns1__Shipment * shipment)
+void saveShipmentToFile(char * s_folderDir, struct ns1__Shipment * shipment)
 {
   FILE * m_file;
-  char * s_fileDir;
-  //strcpy(s_fileDir, "dispatches/");       // copies "one" into str_output
+  char * s_fileDir = malloc(sizeof(char) * 255);
+  strcpy(s_fileDir, s_folderDir);// copies "one" into str_output
   strcat(s_fileDir, shipment->recipient_USCOREname);
   pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
   m_file = fopen(s_fileDir, "ab+");
@@ -101,6 +101,7 @@ void saveShipmentToFile(struct ns1__Shipment * shipment)
 
     fclose(m_file);
   }
+  free(s_fileDir);
   pthread_mutex_unlock(&g_mutex);//unlock mutex, after work with a file
 }
 /// </private functions>

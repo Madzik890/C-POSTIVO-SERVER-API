@@ -24,13 +24,16 @@ long long getStringLength(char *s)
 /// Unpacks and decrypts, file coded in base64.
 /// </summary>
 /// <param name = "document"> Pointer to an array of documents </param>
-void unPackDocument(struct ArrayOfDocumentFiles * document_USCOREfiles)
+void unPackDocument(char * s_folderDir, struct ArrayOfDocumentFiles * document_USCOREfiles)
 {
   for(int i = 0; i < document_USCOREfiles->__size; i++)
   {
     FILE * m_file;
+    char * s_fileDir = malloc(sizeof(char) * 255);
     pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
-    m_file = fopen(document_USCOREfiles->__ptr[i]->file_USCOREname, "ab+");
+    strcpy(s_fileDir, s_folderDir);
+    strcat(s_fileDir, document_USCOREfiles->__ptr[i]->file_USCOREname);
+    m_file = fopen(s_fileDir, "ab+");
     if(m_file != NULL)
     {
       long long l_streamSize = getStringLength(document_USCOREfiles->__ptr[i]->file_USCOREstream);
@@ -39,6 +42,7 @@ void unPackDocument(struct ArrayOfDocumentFiles * document_USCOREfiles)
       fclose(m_file);    
       free(s_decodedStream);
     }
+    free(s_fileDir);
     pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
   }
 }

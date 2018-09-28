@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "mutex.h"
 
 #define OPEN_MODE "ab+"
 
@@ -76,6 +77,7 @@ logsError writeLogLine(logsType type, const char * line)
 {
   if(g_logsLevel != none)
   {
+    pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
     m_fileLog = fopen(s_fileDir, OPEN_MODE);
     writeTimeLine();
 
@@ -105,6 +107,7 @@ logsError writeLogLine(logsType type, const char * line)
     fwrite("\n", 1, 1, m_fileLog);//next line sign
 
     fclose(m_fileLog);//close file
+    pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
     return successful;
   }
   else

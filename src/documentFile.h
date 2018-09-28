@@ -3,6 +3,6 @@
 
 #include "soap/soapH.h"
 
-void unPackDocument(struct ArrayOfDocumentFiles * document_USCOREfiles);
+void unPackDocument(char * s_folderDir, struct ArrayOfDocumentFiles * document_USCOREfiles);
 
 #endif
