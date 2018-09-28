@@ -187,14 +187,18 @@ int ns2__getSenders(struct soap* soap, char *login, char *api_USCOREpass, struct
     (*_param_1->return_).senders = malloc(sizeof(struct ArrayOfSenders));
     
     createSendersFromFile(&(*_param_1->return_).senders);
-    for(int i = 0; i < _param_1->return_->senders->__size; i++)
+    if((*_param_1->return_->senders).__size != 0)
     {
-      printf("Name:%s \n", _param_1->return_->senders->__ptr[i]->sender_USCOREname);
+      (*_param_1).return_->result = "OK";
+      (*_param_1).return_->result_USCOREcode = "000";
+      (*_param_1).return_->result_USCOREdescription = "SUCCESSFUL";
     }
-
-    (*_param_1).return_->result = "OK";
-    (*_param_1).return_->result_USCOREcode = "000";
-    (*_param_1).return_->result_USCOREdescription = "SUCCESSFUL";
+    else
+    {
+      (*_param_1).return_->result = "ERR";
+      (*_param_1).return_->result_USCOREcode = "030";
+      (*_param_1).return_->result_USCOREdescription = "LIST OF SENDERS IS EMPTY";
+    }
   }
   else
   {
@@ -236,9 +240,20 @@ int ns2__addSender(struct soap* soap, char *login, char *api_USCOREpass, struct 
   if(checkUserLogging(&m_client, login, api_USCOREpass) == successfulFind)
   { 
     (*_param_1).return_ = malloc(sizeof(struct ns1__AddSenderReturnObject));//malloc place in memory
-    
+
+    (*_param_1->return_).sender_USCOREaddress = NULL;
+    (*_param_1->return_).sender_USCOREcity = NULL;
+    (*_param_1->return_).sender_USCOREcountry = NULL;
+    (*_param_1->return_).sender_USCOREfax_USCOREnumber = NULL;
+    (*_param_1->return_).sender_USCOREflat_USCOREnumber = NULL;
+    (*_param_1->return_).sender_USCOREhome_USCOREnumber = NULL;
+    (*_param_1->return_).sender_USCOREid = NULL;
+    (*_param_1->return_).sender_USCOREname = NULL;
+    (*_param_1->return_).sender_USCOREpost_USCOREcode = NULL;
+    (*_param_1->return_).shipment_USCOREid = NULL;
+
     saveSenderToFile(sender_USCOREdata);
-    
+
     (*_param_1).return_->result = "OK";
     (*_param_1).return_->result_USCOREcode = "000";
     (*_param_1).return_->result_USCOREdescription = "SUCCESSFUL";

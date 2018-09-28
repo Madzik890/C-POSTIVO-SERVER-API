@@ -98,7 +98,7 @@ void saveSenderToFile(struct ns1__SenderData *sender_USCOREdata)
     fwrite("\n", 1, 1, m_file);
     free(s_temp);
 
-    fwrite("[Sender name]:", 1, 17, m_file);
+    fwrite("[Sender name]:", 1, 14, m_file);
     fwrite(sender_USCOREdata->sender_USCOREname, 1, strlen(sender_USCOREdata->sender_USCOREname), m_file);
     fwrite("\n", 1, 1, m_file);
 
@@ -118,7 +118,7 @@ void saveSenderToFile(struct ns1__SenderData *sender_USCOREdata)
     fwrite(sender_USCOREdata->sender_USCOREhome_USCOREnumber, 1, strlen(sender_USCOREdata->sender_USCOREhome_USCOREnumber), m_file);
     fwrite("\n", 1, 1, m_file);
 
-    fwrite("[Sender flat number]:", 1, 22, m_file);
+    fwrite("[Sender flat number]:", 1, 21, m_file);
     fwrite(sender_USCOREdata->sender_USCOREflat_USCOREnumber, 1, strlen(sender_USCOREdata->sender_USCOREflat_USCOREnumber), m_file);
     fwrite("\n", 1, 1, m_file);
 
