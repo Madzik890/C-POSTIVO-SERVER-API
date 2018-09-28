@@ -3,7 +3,7 @@
  */
 #include "soap/Postivo_x002eplBinding.nsmap"
 #include "soap/soapH.h"
-#include "data/clientsData.h"
+#include "clientsData.h"
 #include "documentFile.h"
 #include "shipments.h"
 #include "senders.h"
@@ -187,6 +187,10 @@ int ns2__getSenders(struct soap* soap, char *login, char *api_USCOREpass, struct
     (*_param_1->return_).senders = malloc(sizeof(struct ArrayOfSenders));
     
     createSendersFromFile(&(*_param_1->return_).senders);
+    for(int i = 0; i < _param_1->return_->senders->__size; i++)
+    {
+      printf("Name:%s \n", _param_1->return_->senders->__ptr[i]->sender_USCOREname);
+    }
 
     (*_param_1).return_->result = "OK";
     (*_param_1).return_->result_USCOREcode = "000";

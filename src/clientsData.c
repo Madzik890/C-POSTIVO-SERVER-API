@@ -2,13 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
+#include "mutex.h"
 
 #define DATABASE_DIR "data/clientsInfo.data"
 
 /// <private instances>
 struct client m_loadedClient;
-pthread_mutex_t m_mutex;
 /// </private instances>
 
 /// <private functions>
@@ -36,11 +35,11 @@ void freeClient(client * client)
 /// <return> State of logged user </return>
 clientStatus checkClient(client * client)
 { 
+  pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
   m_loadedClient.s_login = NULL;
   m_loadedClient.s_password = NULL;
 
   FILE * m_file;
-  pthread_mutex_lock(&m_mutex);//lock mutex, before work with a file
   m_file = fopen(DATABASE_DIR, "r");
   if(m_file != NULL)
   {
@@ -52,11 +51,14 @@ clientStatus checkClient(client * client)
       loadClient(s_buffer);
 
       if(m_loadedClient.s_login != NULL && m_loadedClient.s_password != NULL && compareClient(client) == 1)
+      {
+        fclose(m_file);
+        pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
         return successfulFind;
+      }
     }
-    fclose(m_file);
   }
-  pthread_mutex_unlock(&m_mutex);//unlock mutex, after close a file
+  pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
   return noFind;
 }
 

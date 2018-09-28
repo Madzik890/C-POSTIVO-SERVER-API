@@ -2,12 +2,12 @@
 #include "serverLogs.h"
 #include "serverOptions.h"
 #include <pthread.h>
-#include "data/clientsData.h"
-#include "senders.h"
+#include "mutex.h"
 
 int main()
 {
   //createLogs();
+  pthread_mutex_init(&g_mutex, NULL);
   loadServerOptions();
   g_logsLevel = (logsLevel)g_serverOptions.u_logsLevel;
 
@@ -36,6 +36,6 @@ int main()
 
   closeServer();
   //closeLogs();
-
+  pthread_mutex_destroy(&g_mutex);
   return 0;
 }

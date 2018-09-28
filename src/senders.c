@@ -2,17 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
+#include "mutex.h"
 
 #define FILE_LOCATION "data/sendersInfo.data"
 
 /// <global instances>
 unsigned int u_sendersSize = 0;
 /// </global instances>
-
-/// <private instances>
-pthread_mutex_t m_mutex;
-/// </private instances>
 
 /// <summary>
 /// Uses in "analyzeParam".
@@ -30,6 +26,7 @@ struct senderParamStatus
 };
 
 /// <private functions>
+void resetSenderVariables(struct ns1__Sender ** sender);
 void readSendersFile();
 void getSizeOfSenders();
 void analyzeParam(char line[255], unsigned int * senderNow, struct ns1__Sender ** sender, struct senderParamStatus * status);
@@ -48,19 +45,12 @@ void createSendersFromFile(struct ArrayOfSenders ** senders)
   for(int i = 0; i < u_sendersSize; i++)
   {
     (*(*senders)).__ptr[i] = malloc(sizeof(struct ns1__Sender));
-    (*(*senders)->__ptr[i]).sender_USCOREname = NULL;
-    (*(*senders)->__ptr[i]).sender_USCOREpost_USCOREcode = NULL;
-    (*(*senders)->__ptr[i]).sender_USCOREcity = NULL;
-    (*(*senders)->__ptr[i]).sender_USCOREaddress = NULL;
-    (*(*senders)->__ptr[i]).sender_USCOREhome_USCOREnumber = NULL;
-    (*(*senders)->__ptr[i]).sender_USCOREflat_USCOREnumber = NULL;
-    (*(*senders)->__ptr[i]).active = NULL;
-    (*(*senders)->__ptr[i]).default_ = NULL;
-    (*(*senders)->__ptr[i]).sender_USCOREfax_USCOREnumber = NULL;
-    (*(*senders)->__ptr[i]).sender_USCOREcountry = NULL;
+    /// <reseting variables>
+    resetSenderVariables(&(*(*senders)).__ptr[i]);
+    /// </reseting variables>
   }
   
-  pthread_mutex_lock(&m_mutex);//lock mutex, before work with a file
+  pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
   FILE * m_file;
   m_file = fopen(FILE_LOCATION, "r");
 
@@ -78,7 +68,7 @@ void createSendersFromFile(struct ArrayOfSenders ** senders)
     }
     fclose(m_file);
   }
-  pthread_mutex_unlock(&m_mutex);//unlock mutex, after a close file
+  pthread_mutex_unlock(&g_mutex);//unlock mutex, after a close file
 }
 
 void freeCreatedSender(struct ns1__Sender * sender)
@@ -95,7 +85,7 @@ void saveSenderToFile(struct ns1__SenderData *sender_USCOREdata)
   FILE * m_file;
   getSizeOfSenders();//refresh size of senders
 
-  pthread_mutex_lock(&m_mutex);//lock mutex, before work with a file
+  pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
   m_file = fopen(FILE_LOCATION, "ab+");
   if(m_file != NULL)
   {
@@ -134,10 +124,28 @@ void saveSenderToFile(struct ns1__SenderData *sender_USCOREdata)
 
     fclose(m_file);
   }
-  pthread_mutex_unlock(&m_mutex);//unlock mutex, after close a file
+  pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
 }
 
 /// <private functions>
+
+/// <summary>
+/// Resets sender variables, it's prepare data to send.
+/// While variables is not reseted, server crashes.
+/// </summary>
+void resetSenderVariables(struct ns1__Sender ** sender)
+{
+  (*(*sender)).sender_USCOREname = NULL;
+  (*(*sender)).sender_USCOREpost_USCOREcode = NULL;
+  (*(*sender)).sender_USCOREcity = NULL;
+  (*(*sender)).sender_USCOREaddress = NULL;
+  (*(*sender)).sender_USCOREhome_USCOREnumber = NULL;
+  (*(*sender)).sender_USCOREflat_USCOREnumber = NULL;
+  (*(*sender)).active = NULL;
+  (*(*sender)).default_ = NULL;
+  (*(*sender)).sender_USCOREfax_USCOREnumber = NULL;
+  (*(*sender)).sender_USCOREcountry = NULL;
+}
 
 /// <summary>
 /// Gets the number of senders, located in the data file.
@@ -146,7 +154,7 @@ void saveSenderToFile(struct ns1__SenderData *sender_USCOREdata)
 void getSizeOfSenders()
 {
   FILE * m_file;
-  pthread_mutex_lock(&m_mutex);//lock mutex, before work with a file
+  pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
   m_file = fopen(FILE_LOCATION, "r");
 
   if(m_file != NULL)
@@ -165,10 +173,16 @@ void getSizeOfSenders()
     }
     fclose(m_file);
   }
-  pthread_mutex_unlock(&m_mutex);//unlock mutex, after close a file
-
+  pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
 }
 
+/// <summary>
+/// Creates a sender, loading a data file.
+/// </summary>
+/// <param name = "line[255]"> Line of file </param>
+/// <param name = "senderNow"> Pointer to int which contains, actually number, editing sender </param>
+/// <param name = "sender"> Pointer to a user array </param>
+/// <param name = "status"> Progres of loading parameters of sender </param>
 void analyzeParam(char line[255], unsigned int * senderNow, struct ns1__Sender ** sender, struct senderParamStatus * status)
 {
   char s_param[255];

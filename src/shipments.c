@@ -1,11 +1,8 @@
 #include "shipments.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
+#include "mutex.h"
 
-/// <private instances>
-pthread_mutex_t m_mutex;
-/// </private instances>
 
 /// <private functions>
 void saveShipmentToFile(struct ns1__Shipment * shipment);
@@ -74,7 +71,7 @@ void saveShipmentToFile(struct ns1__Shipment * shipment)
   char * s_fileDir;
   //strcpy(s_fileDir, "dispatches/");       // copies "one" into str_output
   strcat(s_fileDir, shipment->recipient_USCOREname);
-  pthread_mutex_lock(&m_mutex);//lock mutex, before work with a file
+  pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
   m_file = fopen(s_fileDir, "ab+");
   if(m_file != NULL)
   {
@@ -104,6 +101,6 @@ void saveShipmentToFile(struct ns1__Shipment * shipment)
 
     fclose(m_file);
   }
-  pthread_mutex_unlock(&m_mutex);//unlock mutex, after work with a file
+  pthread_mutex_unlock(&g_mutex);//unlock mutex, after work with a file
 }
 /// </private functions>
