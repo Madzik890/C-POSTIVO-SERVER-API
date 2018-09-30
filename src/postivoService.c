@@ -22,6 +22,11 @@ clientStatus checkUserLogging(client * client, char * login, char *api_USCOREpas
   return checkClient(client);
 }
 
+/// <summary>
+/// Changes string, to string without spaces.
+/// </summary>
+/// <param name = "stream"> Stream of string </param>
+/// <return> String without spaces </return>
 char * unspaceString(char * stream)
 {
   char * s_return = stream;
