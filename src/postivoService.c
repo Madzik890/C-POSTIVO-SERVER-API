@@ -8,6 +8,10 @@
 #include "shipments.h"
 #include "senders.h"
 
+#define ERROR_SUPPORT_CODE "999"
+#define ERROR_SUPPORT_DESCRIPTION "DEDICATED SERVER NOT SUPPORT THIS OPERATION"
+
+
 clientStatus checkUserLogging(client * client, char * login, char *api_USCOREpass)
 {
   login[strlen(login) - 1] = '\0'; //delete a newline sign
@@ -16,6 +20,17 @@ clientStatus checkUserLogging(client * client, char * login, char *api_USCOREpas
   (*client).s_login = login;
   (*client).s_password = api_USCOREpass;
   return checkClient(client);
+}
+
+char * unspaceString(char * stream)
+{
+  char * s_return = stream;
+  for(int i = 0; i < strlen(stream); i++)
+  {
+    if(s_return[i] == ' ')
+      s_return[i] = '_';
+  }
+  return s_return;
 }
 
 /// <summary>
@@ -43,13 +58,13 @@ int ns2__dispatch(struct soap* soap, char *login, char *api_USCOREpass, char *ms
 
     if(recipients->__size > 0)
     {
-      char * s_folderDir = malloc(sizeof(100));
+      char * s_folderDir = malloc(sizeof(char) * 100);
       strcpy(s_folderDir, "data/");
       strcat(s_folderDir, recipients->__ptr[0]->recipient_USCOREaddress);
 
-      char * s_command = malloc(sizeof(200));
+      char * s_command = malloc(sizeof(char) * 200);
       strcpy(s_command, "mkdir -p ");
-      strcat(s_command, s_folderDir);
+      strcat(s_command, unspaceString(s_folderDir));
       system(s_command);//create a new folder
 
       strcat(s_folderDir, "/");
@@ -90,8 +105,8 @@ int ns2__getDispatchStatus(struct soap* soap, char *login, char *api_USCOREpass,
   (*_param_1).return_ = malloc(sizeof(struct ns1__DispatchReturnObject));
   (*_param_1).return_->shipments = NULL;
   (*_param_1).return_->result = "ERR";
-  (*_param_1).return_->result_USCOREcode = "999";
-  (*_param_1).return_->result_USCOREdescription = "DEDICATED SERVER NOT SUPPORT THIS OPERATION";
+  (*_param_1).return_->result_USCOREcode = ERROR_SUPPORT_CODE;
+  (*_param_1).return_->result_USCOREdescription = ERROR_SUPPORT_DESCRIPTION;
   return SOAP_OK;
 }
 
@@ -189,8 +204,8 @@ int ns2__getConfigProfiles(struct soap* soap, char *login, char *api_USCOREpass,
   (*_param_1).return_ = malloc(sizeof(struct ns1__ConfigProfilesReturnObject));
   (*_param_1).return_->config_USCOREprofiles = NULL;
   (*_param_1).return_->result = "ERR";
-  (*_param_1).return_->result_USCOREcode = "999";
-  (*_param_1).return_->result_USCOREdescription = "DEDICATED SERVER NOT SUPPORT THIS OPERATION";
+  (*_param_1).return_->result_USCOREcode = ERROR_SUPPORT_CODE;
+  (*_param_1).return_->result_USCOREdescription = ERROR_SUPPORT_DESCRIPTION;
   return SOAP_OK;
 }
 
@@ -249,8 +264,8 @@ int ns2__getCertificate(struct soap* soap, char *login, char *api_USCOREpass, ch
 {
   (*_param_1).return_ = malloc(sizeof(struct ns1__CertificateReturnObject));
   (*_param_1).return_->result = "ERR";
-  (*_param_1).return_->result_USCOREcode = "999";
-  (*_param_1).return_->result_USCOREdescription = "DEDICATED SERVER NOT SUPPORT THIS OPERATION";
+  (*_param_1).return_->result_USCOREcode = ERROR_SUPPORT_CODE;
+  (*_param_1).return_->result_USCOREdescription = ERROR_SUPPORT_DESCRIPTION;
   return SOAP_OK;
 }
 
@@ -311,8 +326,8 @@ int ns2__verifySender(struct soap* soap, char *login, char *api_USCOREpass, int 
 {
   (*_param_1).return_ = malloc(sizeof(struct ns1__VerifySenderReturnObject));
   (*_param_1).return_->result = "ERR";
-  (*_param_1).return_->result_USCOREcode = "999";
-  (*_param_1).return_->result_USCOREdescription = "DEDICATED SERVER NOT SUPPORT THIS OPERATION";
+  (*_param_1).return_->result_USCOREcode = ERROR_SUPPORT_CODE;
+  (*_param_1).return_->result_USCOREdescription = ERROR_SUPPORT_DESCRIPTION;
   return SOAP_OK;
 }
 
@@ -328,7 +343,7 @@ int ns2__removeSender(struct soap* soap, char *login, char *api_USCOREpass, int 
 {
   (*_param_1).return_ = malloc(sizeof(struct ns1__RemoveSenderReturnObject));
   (*_param_1).return_->result = "ERR";
-  (*_param_1).return_->result_USCOREcode = "999";
-  (*_param_1).return_->result_USCOREdescription = "DEDICATED SERVER NOT SUPPORT THIS OPERATION";
+  (*_param_1).return_->result_USCOREcode = ERROR_SUPPORT_CODE;
+  (*_param_1).return_->result_USCOREdescription = ERROR_SUPPORT_DESCRIPTION;
   return SOAP_OK;
 }
