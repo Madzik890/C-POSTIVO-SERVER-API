@@ -17,8 +17,9 @@ int main()
   {
     while (soap_valid_socket(soap_accept(g_soap)))//when accept a new user
     {
+      struct soap * m_soap = soap_copy(g_soap);
       pthread_t th_connection;//thread 
-      if(pthread_create(&th_connection, NULL, (void*)requestClient, g_soap))//create a thread for new user
+      if(pthread_create(&th_connection, NULL, (void*)requestClient, m_soap))//create a thread for new user
       {
         printf("Error creating thread\n");//error while making thread
         return 1;
