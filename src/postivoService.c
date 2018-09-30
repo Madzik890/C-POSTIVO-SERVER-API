@@ -87,6 +87,11 @@ int ns2__dispatch(struct soap* soap, char *login, char *api_USCOREpass, char *ms
 /// <param name = "_param_1"> The result of connections. </param>
 int ns2__getDispatchStatus(struct soap* soap, char *login, char *api_USCOREpass, struct ArrayOfDispatchIds *dispatch_USCOREids, struct ns2__getDispatchStatusResponse *_param_1)
 {
+  (*_param_1).return_ = malloc(sizeof(struct ns1__DispatchReturnObject));
+  (*_param_1).return_->shipments = NULL;
+  (*_param_1).return_->result = "ERR";
+  (*_param_1).return_->result_USCOREcode = "999";
+  (*_param_1).return_->result_USCOREdescription = "DEDICATED SERVER NOT SUPPORT THIS OPERATION";
   return SOAP_OK;
 }
 
@@ -181,6 +186,11 @@ int ns2__getPrice(struct soap* soap, char *login, char *api_USCOREpass, char *ms
 /// <param name = "_param_1"> Array of config profiles. </param>
 int ns2__getConfigProfiles(struct soap* soap, char *login, char *api_USCOREpass, char *msg_USCOREtype, struct ns2__getConfigProfilesResponse *_param_1)
 {
+  (*_param_1).return_ = malloc(sizeof(struct ns1__ConfigProfilesReturnObject));
+  (*_param_1).return_->config_USCOREprofiles = NULL;
+  (*_param_1).return_->result = "ERR";
+  (*_param_1).return_->result_USCOREcode = "999";
+  (*_param_1).return_->result_USCOREdescription = "DEDICATED SERVER NOT SUPPORT THIS OPERATION";
   return SOAP_OK;
 }
 
@@ -237,6 +247,10 @@ int ns2__getSenders(struct soap* soap, char *login, char *api_USCOREpass, struct
 /// <param name = "_param_1"> Result of connection. </param>
 int ns2__getCertificate(struct soap* soap, char *login, char *api_USCOREpass, char *dispatch_USCOREid, int certificate_USCOREtype, struct ns2__getCertificateResponse *_param_1)
 {
+  (*_param_1).return_ = malloc(sizeof(struct ns1__CertificateReturnObject));
+  (*_param_1).return_->result = "ERR";
+  (*_param_1).return_->result_USCOREcode = "999";
+  (*_param_1).return_->result_USCOREdescription = "DEDICATED SERVER NOT SUPPORT THIS OPERATION";
   return SOAP_OK;
 }
 
@@ -295,6 +309,10 @@ int ns2__addSender(struct soap* soap, char *login, char *api_USCOREpass, struct 
 /// <param name = "_param_1"> Result of connection. </param>
 int ns2__verifySender(struct soap* soap, char *login, char *api_USCOREpass, int sender_USCOREid, char *verification_USCOREcode, struct ns2__verifySenderResponse *_param_1)
 {
+  (*_param_1).return_ = malloc(sizeof(struct ns1__VerifySenderReturnObject));
+  (*_param_1).return_->result = "ERR";
+  (*_param_1).return_->result_USCOREcode = "999";
+  (*_param_1).return_->result_USCOREdescription = "DEDICATED SERVER NOT SUPPORT THIS OPERATION";
   return SOAP_OK;
 }
 
@@ -308,5 +326,9 @@ int ns2__verifySender(struct soap* soap, char *login, char *api_USCOREpass, int 
 /// <param name = "_param_1"> Result of connection. </param>
 int ns2__removeSender(struct soap* soap, char *login, char *api_USCOREpass, int sender_USCOREid, struct ns2__removeSenderResponse *_param_1)
 {
+  (*_param_1).return_ = malloc(sizeof(struct ns1__RemoveSenderReturnObject));
+  (*_param_1).return_->result = "ERR";
+  (*_param_1).return_->result_USCOREcode = "999";
+  (*_param_1).return_->result_USCOREdescription = "DEDICATED SERVER NOT SUPPORT THIS OPERATION";
   return SOAP_OK;
 }
