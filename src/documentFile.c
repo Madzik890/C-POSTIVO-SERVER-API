@@ -2,6 +2,7 @@
 #include "base64/base64Decode.h"
 #include <stdio.h>//files
 #include "mutex.h"
+#include "serverLogs.h"
 
 
 /// <summary>
@@ -42,6 +43,8 @@ void unPackDocument(char * s_folderDir, struct ArrayOfDocumentFiles * document_U
       fclose(m_file);    
       free(s_decodedStream);
     }
+    else
+      writeLogLineW(warning, "Cannot open file:", 0, document_USCOREfiles->__ptr[i]->file_USCOREname);
     free(s_fileDir);
     pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
   }

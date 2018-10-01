@@ -1,3 +1,7 @@
+/*
+ * Global declaration of the mutex instance. 
+ */
+
 #ifndef MUTEX_H
 #define MUTEX_H
 

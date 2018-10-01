@@ -7,6 +7,7 @@
 #include "documentFile.h"
 #include "shipments.h"
 #include "senders.h"
+#include "serverLogs.h"
 
 #define ERROR_SUPPORT_CODE "999"
 #define ERROR_SUPPORT_DESCRIPTION "DEDICATED SERVER NOT SUPPORT THIS OPERATION"
@@ -142,6 +143,8 @@ int ns2__getBalance(struct soap* soap, char *login, char *api_USCOREpass, struct
     _param_1->return_->result = "OK";
     _param_1->return_->result_USCOREcode = "000";
     _param_1->return_->result_USCOREdescription = "SUCCESSFUL";
+
+    writeLogLineW(info, "getBalance | ", 0, login);
   }
   else
   {
@@ -183,6 +186,8 @@ int ns2__getPrice(struct soap* soap, char *login, char *api_USCOREpass, char *ms
     (*_param_1).return_->result = "OK";
     (*_param_1).return_->result_USCOREcode = "000";
     (*_param_1).return_->result_USCOREdescription = "SUCCESSFUL";
+
+    writeLogLineW(info, "getPrice | ", 0, login);
   }
   else
   {
@@ -244,6 +249,8 @@ int ns2__getSenders(struct soap* soap, char *login, char *api_USCOREpass, struct
       (*_param_1).return_->result_USCOREcode = "030";
       (*_param_1).return_->result_USCOREdescription = "LIST OF SENDERS IS EMPTY";
     }
+
+    writeLogLineW(info, "getSender | ", 0, login);
   }
   else
   {
@@ -288,24 +295,15 @@ int ns2__addSender(struct soap* soap, char *login, char *api_USCOREpass, struct 
   struct client m_client;
   if(checkUserLogging(&m_client, login, api_USCOREpass) == successfulFind)
   { 
-    (*_param_1).return_ = malloc(sizeof(struct ns1__AddSenderReturnObject));//malloc place in memory
-
-    (*_param_1->return_).sender_USCOREaddress = NULL;
-    (*_param_1->return_).sender_USCOREcity = NULL;
-    (*_param_1->return_).sender_USCOREcountry = NULL;
-    (*_param_1->return_).sender_USCOREfax_USCOREnumber = NULL;
-    (*_param_1->return_).sender_USCOREflat_USCOREnumber = NULL;
-    (*_param_1->return_).sender_USCOREhome_USCOREnumber = NULL;
-    (*_param_1->return_).sender_USCOREid = NULL;
-    (*_param_1->return_).sender_USCOREname = NULL;
-    (*_param_1->return_).sender_USCOREpost_USCOREcode = NULL;
-    (*_param_1->return_).shipment_USCOREid = NULL;
+    (*_param_1).return_ = calloc(1, sizeof(struct ns1__AddSenderReturnObject));//malloc place in memory
 
     saveSenderToFile(sender_USCOREdata);
 
     (*_param_1).return_->result = "OK";
     (*_param_1).return_->result_USCOREcode = "000";
     (*_param_1).return_->result_USCOREdescription = "SUCCESSFUL";
+
+    writeLogLineW(info, "addSender | ", 0, login);
   }
   else
   {

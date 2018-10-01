@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "mutex.h"
+#include "serverLogs.h"
 
 
 /// <private functions>
@@ -101,6 +102,9 @@ void saveShipmentToFile(char * s_folderDir, struct ns1__Shipment * shipment)
 
     fclose(m_file);
   }
+  else
+    writeLogLineW(warning, "Cannot open file: ", 0, s_fileDir);
+
   free(s_fileDir);
   pthread_mutex_unlock(&g_mutex);//unlock mutex, after work with a file
 }

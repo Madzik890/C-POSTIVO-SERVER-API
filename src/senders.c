@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "mutex.h"
+#include "serverLogs.h"
 
 #define FILE_LOCATION "data/sendersInfo.data"
 
@@ -70,6 +71,9 @@ void createSendersFromFile(struct ArrayOfSenders ** senders)
 
     fclose(m_file);
   }
+  else
+    writeLogLineW(warning, "Cannot create file: ", 0, FILE_LOCATION);
+
   pthread_mutex_unlock(&g_mutex);//unlock mutex, after a close file
 }
 
@@ -121,6 +125,9 @@ void saveSenderToFile(struct ns1__SenderData *sender_USCOREdata)
 
     fclose(m_file);
   }
+  else
+    writeLogLineW(warning, "Cannot create file: ", 0, FILE_LOCATION);
+
   pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
 }
 
@@ -170,6 +177,9 @@ void getSizeOfSenders()
     }
     fclose(m_file);
   }
+  else
+    writeLogLineW(warning, "Cannot create file: ", 0, FILE_LOCATION);
+
   pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
 }
 

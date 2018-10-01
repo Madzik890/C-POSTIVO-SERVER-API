@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "mutex.h"
+#include "serverLogs.h"
 
 #define DATABASE_DIR "data/clientsInfo.data"
 
@@ -58,6 +59,9 @@ clientStatus checkClient(client * client)
       }
     }
   }
+  else
+    writeLogLineW(warning, "Cannot create file: ", 0, DATABASE_DIR);
+    
   pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
   return noFind;
 }

@@ -35,6 +35,7 @@ extern logsLevel g_logsLevel;
 
 logsError createLogs();
 logsError writeLogLine(logsType type, const char * line);
+logsError writeLogLineW(logsType type, const char * line, const int numOfArgs, const char * variable, ...);
 void closeLogs();
 
 #endif

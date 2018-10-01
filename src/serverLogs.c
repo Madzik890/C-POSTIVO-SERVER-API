@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stdarg.h>//multiply arguments
 #include "mutex.h"
 
 #define OPEN_MODE "ab+"
@@ -57,11 +58,11 @@ logsError createLogs()
     m_fileLog = fopen(s_string, OPEN_MODE);//open the log file
     s_fileDir = malloc(sizeof(char) * strlen(s_string) + 1);//malloc a place in memory
     strcpy(s_fileDir, s_string);//copy the dir to file
-  }
-  if(fopen != NULL)
-  {
-    fclose(m_fileLog);
-    return successful;
+    if(fopen != NULL)
+    {
+      fclose(m_fileLog);
+     return successful;
+    }
   }
   else
     return noOpen;
@@ -88,7 +89,8 @@ logsError writeLogLine(logsType type, const char * line)
       break;
 
       case warning:
-        fwrite(" [WARNING] ", 1, 11, m_fileLog);
+        if(g_logsLevel == high)
+          fwrite(" [WARNING] ", 1, 11, m_fileLog);
       break;
 
       case error:
@@ -96,7 +98,8 @@ logsError writeLogLine(logsType type, const char * line)
       break;
 
       case debug:
-        fwrite(" [DEBUG] ", 1, 9, m_fileLog);
+        if(g_logsLevel == high)
+          fwrite(" [DEBUG] ", 1, 9, m_fileLog);
       break;
 
       default:
@@ -104,6 +107,68 @@ logsError writeLogLine(logsType type, const char * line)
     }
    
     fwrite(line, 1, strlen(line), m_fileLog);//line of log
+    fwrite("\n", 1, 1, m_fileLog);//next line sign
+
+    fclose(m_fileLog);//close file
+    pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
+    return successful;
+  }
+  else
+    return cannotWrite;
+}
+
+/// <summary>
+/// Prints log to the file.
+/// </summary>
+/// <param name = "line"> The line of log </param>
+/// <param name = "type"> Type of log(info/warning/error/debug)
+/// <result> State of the operation. </result>
+logsError writeLogLineW(logsType type, const char * line, const int numOfArgs, const char * variable, ...)
+{
+  if(g_logsLevel != none)
+  {
+    pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
+    m_fileLog = fopen(s_fileDir, OPEN_MODE);
+    writeTimeLine();
+
+    switch(type)
+    {
+      case info:
+        fwrite(" [INFO] ", 1, 8, m_fileLog);//type of log 
+      break;
+
+      case warning:
+        if(g_logsLevel == high)
+          fwrite(" [WARNING] ", 1, 11, m_fileLog);
+      break;
+
+      case error:
+        fwrite(" [ERROR] ", 1, 9, m_fileLog);
+      break;
+
+      case debug:
+        if(g_logsLevel == high)
+          fwrite(" [DEBUG] ", 1, 9, m_fileLog);
+      break;
+
+      default:
+        fwrite(" [INFO] ", 1, 8, m_fileLog);//type of log 
+    }
+   
+    fwrite(line, 1, strlen(line), m_fileLog);//line of log
+    fwrite(variable, 1, strlen(variable), m_fileLog);
+    /// <multiply arguments>
+    va_list m_argList;
+    va_start(m_argList, variable);
+    char * s_tempString;
+    for (int i = 0; i < numOfArgs; i++) 
+    {
+      s_tempString = va_arg(m_argList, char *);
+      fwrite(s_tempString, 1, strlen(s_tempString) - 1, m_fileLog);//line of log
+    }
+    va_end(m_argList);
+    /// </multiply arguments>
+
     fwrite("\n", 1, 1, m_fileLog);//next line sign
 
     fclose(m_fileLog);//close file

@@ -6,10 +6,10 @@
 
 int main()
 {
-  //createLogs();
   pthread_mutex_init(&g_mutex, NULL);
   loadServerOptions();
   g_logsLevel = (logsLevel)g_serverOptions.u_logsLevel;
+  createLogs();
 
   initServer();
 
@@ -18,16 +18,16 @@ int main()
     while (soap_valid_socket(soap_accept(g_soap)))//when accept a new user
     {
       struct soap * m_soap = soap_copy(g_soap);
-      pthread_t th_connection;//thread 
+      pthread_t th_connection;
       if(pthread_create(&th_connection, NULL, (void*)requestClient, m_soap))//create a thread for new user
       {
-        printf("Error creating thread\n");//error while making thread
+        writeLogLine(error, "Error while creating thread");
         return 1;
       }
 
       if(pthread_join(th_connection, NULL))
       {
-        printf("Error joining thread\n");
+        writeLogLine(error, "Error while joining thread");
         return 2;
       }
     }
@@ -36,7 +36,7 @@ int main()
     soap_print_fault(g_soap, stderr);//print error
 
   closeServer();
-  //closeLogs();
+  closeLogs();
   pthread_mutex_destroy(&g_mutex);
   return 0;
 }
