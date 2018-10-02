@@ -29,7 +29,7 @@ void getTimeinString(char ** string)
   struct tm * m_timeinfo;
   time (&m_rawtime);
   m_timeinfo = localtime(&m_rawtime);//get local time
-  (*string) = asctime(m_timeinfo);//convert struct to string
+  strcpy((*string), asctime(m_timeinfo));//convert struct to string
 }
 
 /// <summary>
@@ -42,6 +42,7 @@ void writeTimeLine()
 
   fwrite(s_time, 1, strlen(s_time) - 1, m_fileLog);//date of log
   fwrite(":", 1, 1, m_fileLog);//write separator
+  free(s_time);
 }
 
 /// <summary>
