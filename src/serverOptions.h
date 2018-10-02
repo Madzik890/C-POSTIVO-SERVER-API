@@ -12,6 +12,7 @@ struct serverOptions
   unsigned long u_sendTimeout;
   unsigned long u_recvTimeout;
   unsigned long u_logsLevel;
+  unsigned int u_logMaxSize;
 };
 
 /// <global instances>

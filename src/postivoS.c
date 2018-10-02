@@ -9,8 +9,8 @@ int main()
   pthread_mutex_init(&g_mutex, NULL);
   loadServerOptions();
   g_logsLevel = (logsLevel)g_serverOptions.u_logsLevel;
+  u_logMaxSize = g_serverOptions.u_logMaxSize;
   createLogs();
-
   initServer();
 
   if (soap_valid_socket(g_soapSocket))
@@ -36,7 +36,7 @@ int main()
     soap_print_fault(g_soap, stderr);//print error
 
   closeServer();
-  closeLogs();
+
   pthread_mutex_destroy(&g_mutex);
   return 0;
 }

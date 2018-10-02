@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <sys/stat.h>//stats of file
 #include <stdarg.h>//multiply arguments
 #include "mutex.h"
 
@@ -10,7 +11,8 @@
 
 /// <members instance>
 FILE * m_fileLog;//the file log
-char * s_fileDir;//direction to the file log
+unsigned int u_logMaxSize = 6291456;//maximum size of log file
+const char * s_fileDir = "log.log";//direction to the file log
 /// <members instance>
 
 /// <global instances>
@@ -43,29 +45,39 @@ void writeTimeLine()
 }
 
 /// <summary>
+/// Gets size of a log file.
+/// </summary>
+/// <return> Size of file(in bytes) </return>
+int getSizeOfLog()
+{
+  struct stat st;
+  stat(s_fileDir, &st);
+  return (int)st.st_size;//bytes
+}
+
+/// <summary>
 /// Creates the file which stores logs.
+/// When size of a log file, is bigger than 6MB, deletes it.
 /// <summary>
 /// <return> State of the operation. </return>
 logsError createLogs()
 {
   if(g_logsLevel != none)
   {
-    time_t m_time = time(NULL);
-    struct tm *m_tm = localtime(&m_time);//get date 
-    char s_string[64];
-    strftime(s_string, sizeof(s_string), "%c", m_tm);
+    if(getSizeOfLog() >= u_logMaxSize)//if log file is bigger than 6MB
+      remove(s_fileDir);
 
-    m_fileLog = fopen(s_string, OPEN_MODE);//open the log file
-    s_fileDir = malloc(sizeof(char) * strlen(s_string) + 1);//malloc a place in memory
-    strcpy(s_fileDir, s_string);//copy the dir to file
+    m_fileLog = fopen(s_fileDir, OPEN_MODE);//open the log file
     if(fopen != NULL)
     {
-      fclose(m_fileLog);
+     fclose(m_fileLog);
      return successful;
     }
+    else
+      return noOpen;
   }
   else
-    return noOpen;
+    return noPermission;
 }
 
 /// <summary>
@@ -82,6 +94,7 @@ logsError writeLogLine(logsType type, const char * line)
     m_fileLog = fopen(s_fileDir, OPEN_MODE);
     writeTimeLine();
 
+    int i_approve = 1;
     switch(type)
     {
       case info:
@@ -91,6 +104,8 @@ logsError writeLogLine(logsType type, const char * line)
       case warning:
         if(g_logsLevel == high)
           fwrite(" [WARNING] ", 1, 11, m_fileLog);
+        else
+          i_approve = 0;
       break;
 
       case error:
@@ -100,14 +115,19 @@ logsError writeLogLine(logsType type, const char * line)
       case debug:
         if(g_logsLevel == high)
           fwrite(" [DEBUG] ", 1, 9, m_fileLog);
+        else
+          i_approve = 0;
       break;
 
       default:
         fwrite(" [INFO] ", 1, 8, m_fileLog);//type of log 
     }
    
-    fwrite(line, 1, strlen(line), m_fileLog);//line of log
-    fwrite("\n", 1, 1, m_fileLog);//next line sign
+    if(i_approve == 1)
+    {
+      fwrite(line, 1, strlen(line), m_fileLog);//line of log
+      fwrite("\n", 1, 1, m_fileLog);//next line sign
+    }
 
     fclose(m_fileLog);//close file
     pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
@@ -131,6 +151,7 @@ logsError writeLogLineW(logsType type, const char * line, const int numOfArgs, c
     m_fileLog = fopen(s_fileDir, OPEN_MODE);
     writeTimeLine();
 
+    int i_approve = 1;
     switch(type)
     {
       case info:
@@ -140,6 +161,8 @@ logsError writeLogLineW(logsType type, const char * line, const int numOfArgs, c
       case warning:
         if(g_logsLevel == high)
           fwrite(" [WARNING] ", 1, 11, m_fileLog);
+        else
+          i_approve = 0;
       break;
 
       case error:
@@ -149,27 +172,31 @@ logsError writeLogLineW(logsType type, const char * line, const int numOfArgs, c
       case debug:
         if(g_logsLevel == high)
           fwrite(" [DEBUG] ", 1, 9, m_fileLog);
+        else
+          i_approve = 0;
       break;
 
       default:
-        fwrite(" [INFO] ", 1, 8, m_fileLog);//type of log 
+        fwrite(" [INFO] ", 1, 8, m_fileLog);//type of log
     }
-   
-    fwrite(line, 1, strlen(line), m_fileLog);//line of log
-    fwrite(variable, 1, strlen(variable), m_fileLog);
-    /// <multiply arguments>
-    va_list m_argList;
-    va_start(m_argList, variable);
-    char * s_tempString;
-    for (int i = 0; i < numOfArgs; i++) 
-    {
-      s_tempString = va_arg(m_argList, char *);
-      fwrite(s_tempString, 1, strlen(s_tempString) - 1, m_fileLog);//line of log
-    }
-    va_end(m_argList);
-    /// </multiply arguments>
 
-    fwrite("\n", 1, 1, m_fileLog);//next line sign
+    if(i_approve == 1)
+    {
+      fwrite(line, 1, strlen(line), m_fileLog);//line of log
+      fwrite(variable, 1, strlen(variable), m_fileLog);
+      /// <multiply arguments>
+      va_list m_argList;
+      va_start(m_argList, variable);
+      char * s_tempString;
+      for (int i = 0; i < numOfArgs; i++) 
+      {
+        s_tempString = va_arg(m_argList, char *);
+        fwrite(s_tempString, 1, strlen(s_tempString) - 1, m_fileLog);//line of log
+      }
+      va_end(m_argList);
+      /// </multiply arguments>
+      fwrite("\n", 1, 1, m_fileLog);//next line sign
+    }
 
     fclose(m_fileLog);//close file
     pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
@@ -177,14 +204,4 @@ logsError writeLogLineW(logsType type, const char * line, const int numOfArgs, c
   }
   else
     return cannotWrite;
-}
-
-/// <summary>
-/// Cautiously close file and 
-/// releases memory.
-/// </summary>
-void closeLogs()
-{
-  fclose(m_fileLog);//close file 
-  free(s_fileDir);//release string dir to file
 }

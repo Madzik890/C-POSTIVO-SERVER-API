@@ -2,6 +2,7 @@
 #include <stdio.h>//files
 #include <stdlib.h>
 #include <string.h>
+#include "serverLogs.h"
 
 #define CONFIG_NAME "serverConfig.txt"
 
@@ -14,6 +15,9 @@ void defaultOptions();
 
 /// <summary>
 /// Converts a config line to parameter.
+/// In "FILE LOG MAX SIZE":
+/// Converts mega bytes to bytes, because size in 
+/// log system is interpreting via bytes.
 /// </summary>
 /// <param name = line> Line read from config file </param>
 void setOptionsParam(char line[50])
@@ -48,7 +52,14 @@ void setOptionsParam(char line[50])
     strncpy(s_param, line + 13, strlen(line) - 13);
     g_serverOptions.u_logsLevel = atoi(s_param);
   }
-}
+  else
+  if(strstr(line, "[FILE LOG MAX SIZE]:"))
+  {
+    strncpy(s_param, line + 20, strlen(line) - 20);
+    g_serverOptions.u_logMaxSize = atoi(s_param);
+    g_serverOptions.u_logMaxSize *= 1048576;// 1048576 = 1MB
+  }                                        
+}                                         
 
 /// <summary>
 /// Loads options about server configuration.
@@ -77,6 +88,7 @@ void loadServerOptions()
   else
   {
     printf("Cannot open the config file \n");
+    writeLogLine(error, "Cannot open the config file");
     createOptionsFile();
     defaultOptions();
   }
@@ -98,8 +110,12 @@ void createOptionsFile()
     fwrite("[SEND TIMEOUT]:5 \n", 1, 18, m_file);
     fwrite("[RECEIVE TIMEOUT]:5 \n", 1, 21, m_file);
     fwrite("[LOGS LEVEL]:1 \n", 1, 16, m_file);
+    fwrite("[FILE LOG MAX SIZE]:6 \n", 1, 23, m_file);
     fclose(m_file);
+    writeLogLine(info, "Created the default options file");
   }
+  else
+    writeLogLine(warning, "Cannot create the options file");
 }
 
 /// <summary>
@@ -111,7 +127,7 @@ void defaultOptions()
   printf("Loading default options. \n");  
 
   g_serverOptions.u_port = 65463;//default port
-  printf("Server port:65464 \n");  
+  printf("Server port:65463 \n");  
 
   g_serverOptions.u_acceptTimeout = 200;//200 minutes
   printf("Accept timeout:200 \n");  
@@ -124,6 +140,9 @@ void defaultOptions()
 
   g_serverOptions.u_logsLevel = 1;//5 seconds
   printf("Logs level:1(normal) \n");  
+
+  g_serverOptions.u_logMaxSize = 6291456;//5 seconds
+  printf("Max logs file size:6 MB \n");  
 
   printf("----------------- \n");
 }

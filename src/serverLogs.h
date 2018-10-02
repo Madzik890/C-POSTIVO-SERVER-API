@@ -31,6 +31,7 @@ enum logsType
 
 /// <global instances>
 extern logsLevel g_logsLevel;
+extern unsigned int u_logMaxSize;
 /// <global instances>
 
 logsError createLogs();
