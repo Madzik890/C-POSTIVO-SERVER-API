@@ -12,7 +12,7 @@
 /// <members instance>
 FILE * m_fileLog;//the file log
 unsigned int u_logMaxSize = 6291456;//maximum size of log file
-const char * s_fileDir = "log.log";//direction to the file log
+const char * s_fileDir = "log.txt";//name of the file log
 /// <members instance>
 
 /// <global instances>
@@ -93,34 +93,32 @@ logsError writeLogLine(logsType type, const char * line)
   {
     pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
     m_fileLog = fopen(s_fileDir, OPEN_MODE);
-    writeTimeLine();
 
     int i_approve = 1;
     switch(type)
     {
       case info:
+        writeTimeLine();
         fwrite(" [INFO] ", 1, 8, m_fileLog);//type of log 
       break;
 
       case warning:
         if(g_logsLevel == high)
+        {
+          writeTimeLine();
           fwrite(" [WARNING] ", 1, 11, m_fileLog);
+        }
         else
           i_approve = 0;
       break;
 
       case error:
+        writeTimeLine();
         fwrite(" [ERROR] ", 1, 9, m_fileLog);
       break;
 
-      case debug:
-        if(g_logsLevel == high)
-          fwrite(" [DEBUG] ", 1, 9, m_fileLog);
-        else
-          i_approve = 0;
-      break;
-
       default:
+        writeTimeLine();
         fwrite(" [INFO] ", 1, 8, m_fileLog);//type of log 
     }
    
@@ -150,34 +148,32 @@ logsError writeLogLineW(logsType type, const char * line, const int numOfArgs, c
   {
     pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
     m_fileLog = fopen(s_fileDir, OPEN_MODE);
-    writeTimeLine();
 
     int i_approve = 1;
     switch(type)
     {
       case info:
+        writeTimeLine();
         fwrite(" [INFO] ", 1, 8, m_fileLog);//type of log 
       break;
 
       case warning:
         if(g_logsLevel == high)
+        {
+          writeTimeLine();
           fwrite(" [WARNING] ", 1, 11, m_fileLog);
+        }
         else
           i_approve = 0;
       break;
 
       case error:
+        writeTimeLine();
         fwrite(" [ERROR] ", 1, 9, m_fileLog);
       break;
 
-      case debug:
-        if(g_logsLevel == high)
-          fwrite(" [DEBUG] ", 1, 9, m_fileLog);
-        else
-          i_approve = 0;
-      break;
-
       default:
+        writeTimeLine();
         fwrite(" [INFO] ", 1, 8, m_fileLog);//type of log
     }
 

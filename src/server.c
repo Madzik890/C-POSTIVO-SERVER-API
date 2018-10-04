@@ -67,9 +67,8 @@ void * requestClient(void * argc)
   struct soap * m_soap = (struct soap *)argc;
 
   printf("User connected on %d port.\n", (m_soap->port));
-  
-  if(soap_serve(m_soap) != SOAP_OK);//delete the GSOAP objects
-    writeLogSoapErr(m_soap);
+
+  soap_serve(m_soap);//delete the GSOAP objects
   soap_destroy(m_soap);//release memory
   soap_end(m_soap);//release object from memory
   soap_free(m_soap);

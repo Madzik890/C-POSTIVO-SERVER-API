@@ -26,7 +26,6 @@ enum logsType
   info,
   warning,
   error,
-  debug
 };
 
 /// <global instances>
