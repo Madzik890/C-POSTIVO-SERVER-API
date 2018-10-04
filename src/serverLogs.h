@@ -37,6 +37,6 @@ extern unsigned int u_logMaxSize;
 logsError createLogs();
 logsError writeLogLine(logsType type, const char * line);
 logsError writeLogLineW(logsType type, const char * line, const int numOfArgs, const char * variable, ...);
-void closeLogs();
+logsError writeLogSoapErr(struct soap * soap);
 
 #endif

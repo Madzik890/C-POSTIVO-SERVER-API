@@ -206,3 +206,33 @@ logsError writeLogLineW(logsType type, const char * line, const int numOfArgs, c
   else
     return cannotWrite;
 }
+
+/// <summary>
+/// Writes log, received from a soap structure to the file.
+/// </summary>
+/// <param name = "soap"> A pointer to a soap object </param>
+/// <result> State of the operation. </result>
+logsError writeLogSoapErr(struct soap * soap)
+{
+  if(g_logsLevel != none)
+  {
+    FILE * m_file;
+    pthread_mutex_lock(&g_mutex);//lock mutex, before work with a file
+    m_file = fopen(s_fileDir, OPEN_MODE);//open the log file
+    if(m_file != NULL)
+    {
+      writeTimeLine();
+      fwrite(" [ERROR] ", 1, 9, m_fileLog);
+      soap_print_fault(soap, m_file);//write error to file
+      soap_print_fault(soap, stderr);//printf error in console
+
+      fclose(m_file);
+      pthread_mutex_unlock(&g_mutex);//unlock mutex, after close a file
+
+      return successful;
+    }
+    pthread_mutex_unlock(&g_mutex);//unlock mutex
+
+    return noOpen;
+  }
+}

@@ -20,6 +20,7 @@ void initServer()
   if (CRYPTO_thread_setup()) // OpenSSL
   {
     fprintf(stderr, "Cannot setup thread mutex\n");
+    writeLogLine(error, "Cannot setup thread mutex");
     exit(1);
   } 
 
@@ -27,8 +28,8 @@ void initServer()
 
   if(soap_ssl_server_context(g_soap, SOAP_SSL_NO_AUTHENTICATION, NULL, NULL, NULL, NULL, NULL, NULL, NULL))//init SSL with no AUTHENTICATION
   {
-    soap_print_fault(g_soap, stderr);//print error
-    writeLogLine(error, "Cannot create SSL encryption.");
+    writeLogSoapErr(g_soap);
+    printf("Cannot create SSL encryption.");
     exit(2);//exit because without ssl, cannot connect to HTTPS
   }
 
@@ -66,7 +67,9 @@ void * requestClient(void * argc)
   struct soap * m_soap = (struct soap *)argc;
 
   printf("User connected on %d port.\n", (m_soap->port));
-  soap_serve(m_soap);//delete the GSOAP objects
+  
+  if(soap_serve(m_soap) != SOAP_OK);//delete the GSOAP objects
+    writeLogSoapErr(m_soap);
   soap_destroy(m_soap);//release memory
   soap_end(m_soap);//release object from memory
   soap_free(m_soap);

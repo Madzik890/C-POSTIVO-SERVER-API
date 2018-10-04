@@ -33,7 +33,7 @@ int main()
     }
   }
   else
-    soap_print_fault(g_soap, stderr);//print error
+    writeLogSoapErr(g_soap);//save error
 
   closeServer();
 
