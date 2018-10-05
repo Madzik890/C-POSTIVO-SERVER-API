@@ -38,7 +38,9 @@ void unPackDocument(char * s_folderDir, struct ArrayOfDocumentFiles * document_U
     if(m_file != NULL)
     {
       long long l_streamSize = getStringLength(document_USCOREfiles->__ptr[i]->file_USCOREstream);
-      char * s_decodedStream = b64_decode(document_USCOREfiles->__ptr[i]->file_USCOREstream, l_streamSize);
+      size_t st_length;
+      unsigned char * s_decodedStream;
+      base64Decode(document_USCOREfiles->__ptr[i]->file_USCOREstream, &s_decodedStream, &st_length);
       fwrite(s_decodedStream, l_streamSize, 1, m_file);
       fclose(m_file);    
       free(s_decodedStream);
